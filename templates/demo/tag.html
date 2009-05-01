@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load markup %}
+{% load usertags %}
+{% load tagging_tags %}
+
+{% block content %}
+<h1>TAG: {{ tag.name }}</h1>
+
+{% tagged_objects tag in demo.PageUser as pu_tags %}
+
+{% if pu_tags %}
+<h2>Pages tagged by User</h2>
+<ul>
+{% for pu in pu_tags %}
+  <li>
+    <a href="{{pu.page.get_absolute_url}}">{{pu.page.title }}</a>
+    tagged by <a href="/user/{{pu.user.username}}/">{{ pu.user.username }}</a>
+  </li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% if not request.user.is_anonymous %}
+{% user_tagged_objects tag request.user in demo.PageUser as u_pages %}
+
+<ul>Pages tagged by you:
+{% for page in u_pages %}
+<li><a href="{{ page.get_absolute_url }}">{{ page.title }}</a></li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% endblock %}

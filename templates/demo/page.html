@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load markup %}
+{% load usertags %}
+
+{% block content %}
+<h1>{{ page.title }}</h1>
+[<a href="/admin/demo/page/{{ page.id }}/">edit</a>]
+{{ page.body|markdown }}
+
+
+{% if page.get_all_tags %}
+<h2>All Tags</h2>
+<ul>
+  {% for tag in page.get_all_tags %}
+  <li><a href="/tag/{{tag.name}}/">{{ tag.name }}</a></li>
+  {% endfor %}
+</ul>
+
+<h2>Tags Per User</h2>
+{% if page.pageuser_set.all %}
+<ul>
+  {% for pu in page.pageuser_set.all %}
+  <li>tags from {{ pu.user.username }}
+    <ul>
+      {% for tag in pu.get_tags %}
+      <li><a href="/tag/{{tag.name}}/">{{ tag.name }}</a></li>
+      {% endfor %}
+    </ul>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% if not request.user.is_anonymous %}
+<h2>Your Tags</h2>
+{% get_user_tags page request.user as request_user_tags %}
+{% if request_user_tags %}
+<ul>
+  {% for tag in request_user_tags %}
+  <li><a href="/tag/{{tag.name}}/">{{ tag.name }}</a></li>
+  {% endfor %}
+</ul>
+{% else %}
+you have not tagged this page
+{% endif %}
+{% endif %}
+
+{% else %}
+this page does not have any tags
+{% endif %}
+
+
+
+
+{% if not request.user.is_anonymous %}
+<form action="add_tags/" method="post">
+  <table>
+    {{ add_tags_form.as_table }}
+  </table>
+  <input type="submit" value="add tags" />
+</form>
+{% endif %}
+{% endblock %}

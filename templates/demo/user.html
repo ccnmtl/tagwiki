@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load markup %}
+{% load usertags %}
+{% load tagging_tags %}
+
+{% block content %}
+<h1>USER: {{ user.username }}</h1>
+
+
+
+<h2>tagged pages</h2>
+<ul>
+  {% for pu in user.pageuser_set.all %}
+  <li><a href="{{pu.page.get_absolute_url}}">{{ pu.page.title }}</a>
+    <ul>
+      {% for tag in pu.get_tags %}
+      <li><a href="/tag/{{ tag.name }}/">{{tag.name}}</a></li>
+      {% endfor %}
+    </ul>
+  </li>
+  {% endfor %}
+</ul>
+
+<h2>all tags</h2>
+{% get_all_user_tags user demo.PageUser as utags %}
+<ul>
+  {% for tag in utags %}
+  <li><a href="/tag/{{tag.name}}/">{{ tag.name }}</a></li>
+  {% endfor %}
+</ul>
+
+
+{% endblock %}
